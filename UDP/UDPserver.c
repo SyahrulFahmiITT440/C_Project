@@ -3,6 +3,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <stdio.h>
+#include <string.h>
 
 void error(char *msg)
 {
@@ -12,16 +13,10 @@ void error(char *msg)
 
 int main(int argc, char *argv[])
 {
- int sock, length, fromlen, n;
+ int buffylen, sock, length, fromlen, n;
  struct sockaddr_in server;
  struct sockaddr_in from;
- char buf[1024];
- 
- if (argc < 2)
- {
-  fprintf(stderr, "ERROR, no port provided\n");
-  exit(0);
- }
+ char buf[1024], buffy[1024];
  
  sock=socket(AF_INET, SOCK_DGRAM, 0);
  if(sock < 0)
@@ -34,28 +29,30 @@ int main(int argc, char *argv[])
  server.sin_family=AF_INET;
  /*I am using INADDR_ANY to set its IP to localhost*/
  server.sin_addr.s_addr=INADDR_ANY;
- /*Getting the port number from user */
- server.sin_port=htons(atoi(argv[1]));
+ server.sin_port=htons(1030);
  if (bind(sock,(struct sockaddr *)&server,length)<0)
  {
   error("binding");
  }
  fromlen = sizeof(struct sockaddr_in);
  
- while(1)
- {
-  n = recvfrom(sock, buf, 1024, 0,(struct sockaddr *)&from,&fromlen);
+// while(1)
+// {
+  n = recvfrom(sock, buf, 1024, 0,(struct sockaddr 
+*)&from,&fromlen);
   if(n<0)
   {
    error("recvfrom");
   }
-  write(1,"Received a datagram: ",21);
+  write(1,"\nReceived the message: ",24);
+  for(int i = 0; i < n; i++)
+	buffy[i] = toupper(buf[i]);
   write(1,buf,n);
-  n = sendto(sock,"got your message\n",17,0,(struct sockaddr 
-*)&from,fromlen);
+  write(1,"\n(Success)\n\n",15);
+  n = sendto(sock,buffy,sizeof(buffy),0,&from,fromlen);
   if(n<0)
   {
    error("sendto");
   }
- }
+// }
 }
