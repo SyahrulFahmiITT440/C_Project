@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
  int buffylen, sock, length, fromlen, n;
  struct sockaddr_in server;
  struct sockaddr_in from;
- char buf[1024], buffy[1024];
+ char buf[1024], buffy[1024], name[10] = "Message: ";
  
  sock=socket(AF_INET, SOCK_DGRAM, 0);
  if(sock < 0)
@@ -44,12 +44,13 @@ int main(int argc, char *argv[])
   {
    error("recvfrom");
   }
-  write(1,"\nReceived the message: ",24);
+
+  write(1,name, strlen(name));
   for(int i = 0; i < n; i++)
 	buffy[i] = toupper(buf[i]);
   write(1,buf,n);
-  write(1,"\n(Success)\n\n",15);
-  n = sendto(sock,buffy,sizeof(buffy),0,&from,fromlen);
+  write(1,"\n",1);
+  n = sendto(sock,buffy,strlen(buffy),0,&from,fromlen);
   if(n<0)
   {
    error("sendto");

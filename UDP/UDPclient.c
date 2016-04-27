@@ -56,6 +56,6 @@ int main(int argc, char *argv[])
  {
   error("recvfrom");
  }
- write(1,"\nAcknowledged: ",15);
+ write(1,"\nConverted: ",16);
  write(1,buffer,n);
 }
